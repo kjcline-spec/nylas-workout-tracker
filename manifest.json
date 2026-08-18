@@ -1,0 +1,9 @@
+{
+  "name": "Nyla's Workout Tracker",
+  "short_name": "Nyla Workout",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f3f4f6",
+  "theme_color": "#111827",
+  "description": "Nyla's Workout Tracker \u2014 workout planning and logging."
+}
