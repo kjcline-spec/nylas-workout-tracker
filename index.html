@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="description" content="A simple local-first workout tracker." />
+  <title>Nyla's Workout Tracker</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">LOCAL-FIRST WORKOUT LOG</div>
+        <h1>Nyla's Workout Tracker</h1>
+      </div>
+      <button id="themeBtn" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">☾</button>
+    </header>
+
+    <main>
+      <section id="todayView" class="view active">
+        <div class="card hero-card">
+          <div>
+            <div class="eyebrow" id="todayLabel"></div>
+            <h2 id="workoutTitleDisplay">Today's Workout</h2>
+            <div class="muted" id="lastSavedLabel">Nothing saved yet today.</div>
+          </div>
+          <div class="hero-stats">
+            <div><strong id="workoutCountStat">0</strong><span>workouts</span></div>
+            <div><strong id="setCountStat">0</strong><span>sets</span></div>
+            <div><strong id="streakStat">0</strong><span>day streak</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="form-grid two">
+            <label>
+              Workout name
+              <input id="workoutName" placeholder="e.g. Push, Legs, Full Body" />
+            </label>
+            <label>
+              Body weight (optional)
+              <input id="bodyWeight" type="number" inputmode="decimal" step="0.1" placeholder="e.g. 218.4" />
+            </label>
+          </div>
+
+          <div class="section-heading">
+            <div>
+              <h3>Exercises</h3>
+              <p class="muted">Add an exercise, then log as many sets as you need.</p>
+            </div>
+            <button id="addExerciseBtn" class="primary-btn">+ Add exercise</button>
+          </div>
+
+          <div id="exerciseBlocks" class="exercise-list"></div>
+
+          <label class="full-width">
+            Workout notes
+            <textarea id="workoutNotes" rows="3" placeholder="How did the workout feel? Anything to remember next time?"></textarea>
+          </label>
+
+          <div class="action-row">
+            <button id="clearCurrentBtn" class="secondary-btn">Clear</button>
+            <button id="saveWorkoutBtn" class="primary-btn">Save workout</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="historyView" class="view">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">YOUR LOG</div>
+            <h2>Workout History</h2>
+          </div>
+          <input id="historySearch" class="compact-input" placeholder="Search workouts or exercises" />
+        </div>
+        <div id="historyList" class="stack"></div>
+      </section>
+
+      <section id="exercisesView" class="view">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">CUSTOMIZE</div>
+            <h2>Exercise Library</h2>
+            <p class="muted">Add, rename, or remove exercises. Changes appear immediately in the workout logger.</p>
+          </div>
+          <button id="newLibraryExerciseBtn" class="primary-btn">+ New exercise</button>
+        </div>
+        <div class="card">
+          <div class="exercise-manager-top">
+            <input id="exerciseSearch" placeholder="Search exercises" />
+            <select id="muscleFilter">
+              <option value="">All muscle groups</option>
+            </select>
+          </div>
+          <div id="exerciseManagerList" class="manager-list"></div>
+        </div>
+      </section>
+
+      <section id="progressView" class="view">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow">TRENDS</div>
+            <h2>Progress</h2>
+          </div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric card"><span>Total workouts</span><strong id="progressWorkouts">0</strong></div>
+          <div class="metric card"><span>Total sets</span><strong id="progressSets">0</strong></div>
+          <div class="metric card"><span>This week</span><strong id="progressWeek">0</strong></div>
+          <div class="metric card"><span>Current streak</span><strong id="progressStreak">0</strong></div>
+        </div>
+
+        <div class="card">
+          <div class="section-heading">
+            <div>
+              <h3>Exercise progress</h3>
+              <p class="muted">Pick an exercise to see your recent logged sets and best recorded weight.</p>
+            </div>
+            <select id="progressExerciseSelect"></select>
+          </div>
+          <div id="exerciseProgressContent" class="progress-content"></div>
+        </div>
+
+        <div class="card">
+          <h3>Backup & restore</h3>
+          <p class="muted">Your data is stored on this device. Export a backup occasionally so you never lose your history.</p>
+          <div class="action-row left">
+            <button id="exportBtn" class="secondary-btn">Export backup</button>
+            <label class="file-btn">
+              Import backup
+              <input id="importInput" type="file" accept=".json,application/json" hidden />
+            </label>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Main navigation">
+      <button data-view="todayView" class="nav-btn active"><span>＋</span>Today</button>
+      <button data-view="historyView" class="nav-btn"><span>☷</span>History</button>
+      <button data-view="exercisesView" class="nav-btn"><span>⌁</span>Exercises</button>
+      <button data-view="progressView" class="nav-btn"><span>↗</span>Progress</button>
+    </nav>
+  </div>
+
+  <dialog id="exerciseDialog">
+    <form method="dialog" id="exerciseDialogForm" class="dialog-card">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">ADD TO WORKOUT</div>
+          <h3>Choose exercise</h3>
+        </div>
+        <button class="icon-btn" value="cancel" aria-label="Close">×</button>
+      </div>
+      <input id="exerciseDialogSearch" placeholder="Search your exercise library" />
+      <div id="exercisePickerList" class="picker-list"></div>
+      <button type="button" id="quickCreateExerciseBtn" class="secondary-btn full-btn">+ Create a new exercise</button>
+    </form>
+  </dialog>
+
+  <dialog id="manageExerciseDialog">
+    <form method="dialog" id="manageExerciseForm" class="dialog-card">
+      <input type="hidden" id="editExerciseId" />
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">EXERCISE LIBRARY</div>
+          <h3 id="manageExerciseDialogTitle">New exercise</h3>
+        </div>
+        <button class="icon-btn" value="cancel" aria-label="Close">×</button>
+      </div>
+      <label>
+        Exercise name
+        <input id="exerciseNameInput" required placeholder="e.g. Barbell Bench Press" />
+      </label>
+      <label>
+        Muscle group
+        <select id="exerciseMuscleInput">
+          <option>Chest</option>
+          <option>Back</option>
+          <option>Shoulders</option>
+          <option>Biceps</option>
+          <option>Triceps</option>
+          <option>Legs</option>
+          <option>Glutes</option>
+          <option>Core</option>
+          <option>Cardio</option>
+          <option>Full Body</option>
+          <option>Other</option>
+        </select>
+      </label>
+      <label>
+        Tracking type
+        <select id="exerciseTypeInput">
+          <option value="strength">Weight + reps</option>
+          <option value="bodyweight">Reps only</option>
+          <option value="cardio">Duration + distance</option>
+        </select>
+      </label>
+      <div class="action-row">
+        <button value="cancel" class="secondary-btn">Cancel</button>
+        <button type="button" id="saveLibraryExerciseBtn" class="primary-btn">Save exercise</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="historyDialog">
+    <div class="dialog-card" id="historyDialogContent"></div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
